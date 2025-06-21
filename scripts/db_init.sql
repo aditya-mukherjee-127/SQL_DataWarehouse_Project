@@ -13,3 +13,6 @@ GO
 
 CREATE SCHEMA gold;
 GO
+
+CREATE SCHEMA logs;
+GO
