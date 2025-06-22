@@ -52,5 +52,10 @@ SELECT
     ISNULL(prd_cost, 0) AS prd_cost,
     prd_line,
     prd_start_dt,
+    -- To deal with the situation where prd_end_dt < prd_start_dt in raw data, there was a way to just swap the values,
+    -- but in such case there waould be overlap of data, implies that for a particular product with overlapping date range,
+    -- the prd_cost would be different, which is not at all acceptable.
+    -- Hence, prd_end_dt is calculated as the next prd_start_dt minus one day.
+    -- This ensures that the end date is always after the next start date and avoids overlaps and also fits the situation. 
     (LEAD(prd_start_dt) OVER (PARTITION BY prd_key ORDER BY prd_start_dt) - 1) AS prd_end_dt
 FROM bronze.crm_prd_info;
