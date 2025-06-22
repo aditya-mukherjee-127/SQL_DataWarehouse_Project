@@ -1,5 +1,6 @@
 USE Data_Warehouse;
 
+-- Quality check for silver.crm_cust_info
 SELECT TOP 100 * FROM silver.crm_cust_info;
 
 SELECT
@@ -38,3 +39,31 @@ SELECT
     COUNT(*) AS gender_count
 FROM silver.crm_cust_info
 GROUP BY cst_gndr;
+
+
+-- Quality check for silver.crm_prd_info
+SELECT TOP 100 * FROM silver.crm_prd_info;
+
+SELECT
+    prd_id,
+    COUNT(*)
+FROM silver.crm_prd_info
+GROUP BY prd_id
+HAVING COUNT(*) > 1;
+
+SELECT
+    prd_id,
+    prd_key
+FROM silver.crm_prd_info
+WHERE prd_key IS NULL;
+
+SELECT
+    prd_id,
+    prd_cost
+FROM silver.crm_prd_info
+WHERE prd_cost < 0 OR prd_cost IS NULL;
+
+SELECT
+    *
+FROM silver.crm_prd_info
+WHERE prd_start_dt > prd_end_dt OR prd_start_dt IS NULL;
