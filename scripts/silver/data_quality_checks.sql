@@ -67,3 +67,71 @@ SELECT
     *
 FROM silver.crm_prd_info
 WHERE prd_start_dt > prd_end_dt OR prd_start_dt IS NULL;
+
+
+
+-- Quality check for silver.crm_sales_details
+SELECT TOP 100 * FROM silver.crm_sales_details;
+
+SELECT
+    sls_ord_num,
+    COUNT(*)
+FROM silver.crm_sales_details
+GROUP BY sls_ord_num
+HAVING COUNT(*) > 1;
+
+SELECT
+    sls_prd_key,
+    COUNT(*)
+FROM silver.crm_sales_details
+GROUP BY sls_prd_key
+HAVING COUNT(*) > 1;
+
+SELECT
+    sls_cust_id,
+    COUNT(*)
+FROM silver.crm_sales_details
+GROUP BY sls_cust_id
+HAVING sls_cust_id IS NULL;
+
+SELECT
+    sls_order_dt
+FROM silver.crm_sales_details
+WHERE sls_order_dt IS NULL OR LEN(sls_order_dt) != 8;
+
+SELECT
+    sls_sales,
+    sls_quantity,
+    sls_price
+FROM silver.crm_sales_details
+WHERE
+    sls_sales <= 0 OR 
+    sls_quantity <= 0 OR
+    sls_price <= 0 OR
+    sls_sales IS NULL OR
+    sls_quantity IS NULL OR
+    sls_price IS NULL OR
+    sls_sales != sls_quantity * sls_price;
+
+
+
+
+
+
+-- Qualtity check for silver.erp_cust_az12
+SELECT TOP 100 * FROM silver.erp_cust_az12;
+
+SELECT bdate FROM silver.erp_cust_az12
+WHERE bdate IS NULL OR bdate = '' OR bdate > GETDATE();
+
+SELECT DISTINCT gen FROM silver.erp_cust_az12;
+
+
+
+
+
+
+-- Quality check for silver.erp_loc_a101
+SELECT TOP 100 * FROM silver.erp_loc_a101;
+
+SELECT DISTINCT cntry FROM bronze.erp_loc_a101;
